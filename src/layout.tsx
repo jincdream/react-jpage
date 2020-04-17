@@ -12,7 +12,7 @@ export interface ILayoutProps {
 export default class Layout extends Component<ILayoutProps, ILayoutProps> {
   state = this.props
   componentWillReceiveProps(props: ILayoutProps) {
-    let keys = ["colunms", "rows", "template"] as (keyof ILayoutProps)[]
+    let keys = ["columns", "rows", "template"] as (keyof ILayoutProps)[]
     let state = updateSate<ILayoutProps>(keys, props, this.state)
     this.setState(state)
   }
