@@ -30,7 +30,7 @@ var Layout = /*#__PURE__*/function (_Component) {
   var _proto = Layout.prototype;
 
   _proto.componentWillReceiveProps = function componentWillReceiveProps(props) {
-    var keys = ["colunms", "rows", "template"];
+    var keys = ["columns", "rows", "template"];
     var state = updateSate(keys, props, this.state);
     this.setState(state);
   };

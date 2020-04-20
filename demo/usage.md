@@ -10,9 +10,21 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactJPage from 'react-j-page';
 
-class Text extends Component {
+class Input extends Component {
   render(){
-    return <span style={{color: "green"}}>{this.props.text}</span>
+    return <input onChange={(e)=>{
+      this.props.onChange && this.props.onChange(e.target.value)
+    }}/>
+  }
+}
+
+class Text extends Component {
+  state = {ext: ""}
+  render(){
+    return <span style={{color: "green"}} onClick={()=>{
+      this.props.onChange && this.props.onChange(this.props.text)
+      console.log(this.props)
+    }}>{this.props.text}-{this.state.ext}</span>
   }
 }
 
@@ -45,7 +57,8 @@ class App extends Component {
           components={{
             Block,
             Page,
-            Text
+            Text,
+            Input
           }}
           schema={{
             data: {
@@ -54,6 +67,35 @@ class App extends Component {
                   style: {
                     background: "red"
                   }
+                }
+              },
+              Input: {
+                effect: {
+                  enble: true,
+                  handles: [
+                    {
+                      trigger: 'onChange',
+                      condition: "true",
+                      handle: {
+                        targetUid: 'Text$5',
+                        type: 'set',
+                        value: {
+                          ext: '$value',
+                        },
+                      },
+                    },
+                  ],
+                },
+                fields:{
+                  text: "点我"
+                }
+              },
+              Text$5: {
+                effect: {
+                  enble: true
+                },
+                fields:{
+                  text: "别点我"
                 }
               },
               Layout$1: {
@@ -85,7 +127,7 @@ class App extends Component {
                 Block$1: ["Text$1"],
                 Block$2: ["Text$2"],
                 Block$3: ["Text$1","Text$2"],
-                Block$4: ["Text$1","Text$1"]
+                Block$4: ["Input","Text$5"]
               }
             }
           }}/>

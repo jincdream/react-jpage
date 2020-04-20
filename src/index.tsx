@@ -3,6 +3,7 @@ import isEqual from 'lodash.isequal'
 import ObsParser, { IComponentRenderDO, Base } from 'obs-parser'
 import { IProps, IState } from './index.d'
 import Layout from './layout'
+import EffectWrap from './EffectWrap'
 import { updateSate, fixGridAreaName } from './common'
 
 const LocalComponents: { [key: string]: React.ReactType } = { Layout }
@@ -42,7 +43,7 @@ export default class ReactJPage<
   }
   renderComponents(component: IComponentRenderDO<AllComponents, Components>, index: number) {
     let { components: ReactComponents } = this.props
-    let { n: name, d: data, id, childrens } = component
+    let { n: name, d: data, id, childrens, e: effect } = component
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C = LocalComponents[name] || ReactComponents[name]
     if (!C) return <div key={component.id as string} />
@@ -54,6 +55,7 @@ export default class ReactJPage<
       ...data,
       style: { gridRow: layout, gridColumn: layout, ...data.style },
     }, childrensComponent)
+    if (effect) return <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
     return Child
   }
   render() {
