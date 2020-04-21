@@ -11,6 +11,7 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import ObsParser from 'obs-parser';
 import Layout from './layout';
+import EffectWrap from './EffectWrap';
 import { updateSate, fixGridAreaName } from './common';
 var LocalComponents = {
   Layout: Layout
@@ -63,7 +64,8 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     var name = component.n,
         data = component.d,
         id = component.id,
-        childrens = component.childrens;
+        childrens = component.childrens,
+        effect = component.e;
     name = name.replace(/^(\S)/, function (m, a) {
       return a.toUpperCase();
     });
@@ -84,6 +86,9 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
         gridColumn: layout
       }, data.style)
     }), childrensComponent);
+    if (effect) return /*#__PURE__*/React.createElement(EffectWrap, _extends({
+      key: id + index
+    }, effect), Child);
     return Child;
   };
 
@@ -91,7 +96,8 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     var _ref = this.state || {},
         schema = _ref.schema;
 
-    if (!schema) return /*#__PURE__*/React.createElement("div", null, "loadding...");
+    console.log(schema, "schema");
+    if (!schema) return /*#__PURE__*/React.createElement("div", null);
     var rootComponent = ObsParser(schema)[0];
     return this.renderComponents(rootComponent, 0);
   };

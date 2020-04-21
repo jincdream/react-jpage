@@ -9,8 +9,8 @@ export function updateSate<R>(
   keys.forEach((key) => {
     let value = thisState[key]
     let receiveValue = receiveProps[key]
-    if (isEqual(value, receiveValue)) {
-      Object.defineProperty(state, key, { value: receiveValue })
+    if (!isEqual(value, receiveValue)) {
+      state[key] = receiveValue
     }
   })
   return state

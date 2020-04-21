@@ -50,17 +50,8 @@ class Page extends Component {
 }
 
 class App extends Component {
-  render() {
-    return (
-      <div>
-        <ReactJPage
-          components={{
-            Block,
-            Page,
-            Text,
-            Input
-          }}
-          schema={{
+  state = {
+    schema: {
             data: {
               Block$1: {
                 fields: {
@@ -130,7 +121,43 @@ class App extends Component {
                 Block$4: ["Input","Text$5"]
               }
             }
-          }}/>
+          }
+  }
+  render() {
+    return (
+      <div>
+        <button onClick={()=>{
+          this.setState({
+            schema: {
+            data: {},
+            hierarchy: {
+              componentDetail: {
+                Block: {
+                  text: "132"
+                },
+                Text: {
+                  text: "32"
+                }
+              },
+              root: "Page",
+              structure: {
+                Page: ["Layout$1"],
+                Layout$1: ["Block$1","Block$2"],
+                Block$1: ["Text$1"],
+                Block$2: ["Text$2"],
+              }
+            }
+          }
+          })
+        }}>reset</button>
+        <ReactJPage
+          components={{
+            Block,
+            Page,
+            Text,
+            Input
+          }}
+          schema={this.state.schema}/>
       </div>
     );
   }

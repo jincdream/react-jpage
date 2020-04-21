@@ -60,7 +60,7 @@ export default class ReactJPage<
   }
   render() {
     let { schema } = this.state || {}
-    if (!schema) return <div>loadding...</div>
+    if (!schema) return <div />
     let rootComponent = ObsParser<Components, AllComponents>(schema)[0]
     return this.renderComponents(rootComponent, 0)
   }

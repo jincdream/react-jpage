@@ -5,10 +5,8 @@ export function updateSate(keys, receiveProps, thisState) {
     var value = thisState[key];
     var receiveValue = receiveProps[key];
 
-    if (isEqual(value, receiveValue)) {
-      Object.defineProperty(state, key, {
-        value: receiveValue
-      });
+    if (!isEqual(value, receiveValue)) {
+      state[key] = receiveValue;
     }
   });
   return state;
