@@ -1,6 +1,7 @@
 import React from 'react'
 import { Client, Server } from 'jinter'
 import expressionRun from 'expression-run'
+import _set from 'lodash.set'
 
 const ServerName = "__Effect__" + Date.now().toString(32)
 const EffectServer = new Server(ServerName)
@@ -39,18 +40,26 @@ export default class EffectWrap extends React.Component {
   init() {
     let { serverPath } = this
     EffectServer.onPost({ path: serverPath[1] }, async ({ visible }) => { this.setState({ visible }) })
-    EffectServer.onPost({ path: serverPath[0] }, async ({ state = {} }) => { this.refs[this.uid] && this.refs[this.uid].setState({ ...state }) })
+    EffectServer.onPost({ path: serverPath[0] }, async ({ state = {} }) => {
+      let ref = this.refs[this.uid]
+      if (!ref) return;
+      let thisState = ref.state
+      Object.keys(state).forEach(name => {
+        _set(thisState, name, state[name])
+      })
+      ref.setState({ ...thisState })
+    })
   }
   componentWillUnmount() {
     this.serverPath.forEach(v => { EffectServer.remove("post", v) })
   }
-  doEffect(value, effect) {
+  doEffect(values, effect) {
     let component = this.refs[this.uid] || {}
     let { Client } = this
     let { condition = "true", handle } = effect
     let { type, targetUid = this.uid, value: state = {} } = handle
     let context = {
-      $value: value,
+      $value: values.length > 1 ? values : values[0],
       $state: component.state || {},
       $props: component.props || {}
     }
@@ -72,6 +81,7 @@ export default class EffectWrap extends React.Component {
         break;
     }
   }
+  componentDidMount() { }
   render() {
     let { visible } = this.state
     let { effects = [], children, uid, ...myProps } = this.props
@@ -87,14 +97,14 @@ export default class EffectWrap extends React.Component {
         triggers[trigger] = [function (...args) {
           defaultHandle && defaultHandle.apply(this, args)
         }]
-        newProps[trigger] = (value) => {
+        newProps[trigger] = (...values) => {
           triggers[trigger].forEach(fn => {
-            fn(value)
+            fn(values)
           })
         }
       }
-      triggers[trigger].push((v) => {
-        this.doEffect(v, effect)
+      triggers[trigger].push((values) => {
+        this.doEffect(values, effect)
       })
     })
     let C = React.cloneElement(children, {

@@ -5,7 +5,7 @@ import { IProps, IState } from './index.d'
 import Layout from './layout'
 import EffectWrap from './EffectWrap'
 import { updateSate, fixGridAreaName } from './common'
-
+import { Server, Client } from 'jinter'
 const LocalComponents: { [key: string]: React.ReactType } = { Layout }
 
 export default class ReactJPage<
@@ -16,16 +16,28 @@ export default class ReactJPage<
   >{
   constructor(props: IProps<AllComponents, Components>) {
     super(props)
+    // this.Server.onPost({
+    //   path: "/save/effect"
+    // }, async () => {
+
+    // })
   }
-  componentDidMount() {
-    this.setState({
-      schema: this.props.schema
-    })
+  triggers: {
+    [key: string]: () => void
+  }[] = []
+  // serverId = "____ReactJPage____" + Date.now().toString(32)
+  // Server = new Server(this.serverId)
+  state = {
+    schema: this.props.schema,
+    components: {}
   }
   componentWillReceiveProps(props: IProps<AllComponents, Components>) {
     let keys = ["schema"] as (keyof IProps<AllComponents, Components>)[]
     let state = updateSate<IProps<AllComponents, Components>>(keys, props, this.state)
     this.setState(state)
+  }
+  componentDidMount() {
+    // console.log("gpaggg")
   }
   updateSate(
     keys: (keyof IState<AllComponents, Components>)[],

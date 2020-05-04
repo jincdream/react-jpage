@@ -13,6 +13,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 import React from 'react';
 import { Client, Server } from 'jinter';
 import expressionRun from 'expression-run';
+import _set from 'lodash.set';
 var ServerName = "__Effect__" + Date.now().toString(32);
 var EffectServer = new Server(ServerName); // EffectWrap$1: {
 //   fields: {
@@ -95,16 +96,30 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
       path: serverPath[0]
     }, /*#__PURE__*/function () {
       var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(_ref3) {
-        var _ref3$state, state;
+        var _ref3$state, state, ref, thisState;
 
         return _regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _ref3$state = _ref3.state, state = _ref3$state === void 0 ? {} : _ref3$state;
-                _this2.refs[_this2.uid] && _this2.refs[_this2.uid].setState(_extends({}, state));
+                ref = _this2.refs[_this2.uid];
 
-              case 2:
+                if (ref) {
+                  _context2.next = 4;
+                  break;
+                }
+
+                return _context2.abrupt("return");
+
+              case 4:
+                thisState = ref.state;
+                Object.keys(state).forEach(function (name) {
+                  _set(thisState, name, state[name]);
+                });
+                ref.setState(_extends({}, thisState));
+
+              case 7:
               case "end":
                 return _context2.stop();
             }
@@ -172,6 +187,8 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
         break;
     }
   };
+
+  _proto.componentDidMount = function componentDidMount() {};
 
   _proto.render = function render() {
     var _this3 = this;

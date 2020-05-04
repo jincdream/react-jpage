@@ -23,16 +23,22 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   var _super = _createSuper(ReactJPage);
 
   function ReactJPage(props) {
-    return _React$Component.call(this, props) || this;
+    var _this;
+
+    _this = _React$Component.call(this, props) || this; // this.Server.onPost({
+    //   path: "/save/effect"
+    // }, async () => {
+    // })
+
+    _this.triggers = [];
+    _this.state = {
+      schema: _this.props.schema,
+      components: {}
+    };
+    return _this;
   }
 
   var _proto = ReactJPage.prototype;
-
-  _proto.componentDidMount = function componentDidMount() {
-    this.setState({
-      schema: this.props.schema
-    });
-  };
 
   _proto.componentWillReceiveProps = function componentWillReceiveProps(props) {
     var keys = ["schema"];
@@ -40,12 +46,15 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     this.setState(state);
   };
 
+  _proto.componentDidMount = function componentDidMount() {// console.log("gpaggg")
+  };
+
   _proto.updateSate = function updateSate(keys, receiveProps) {
-    var _this = this;
+    var _this2 = this;
 
     var state = {};
     keys.forEach(function (key) {
-      var value = _this.state[key];
+      var value = _this2.state[key];
       var receiveValue = receiveProps[key];
 
       if (isEqual(value, receiveValue)) {
@@ -58,7 +67,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.renderComponents = function renderComponents(component, index) {
-    var _this2 = this;
+    var _this3 = this;
 
     var ReactComponents = this.props.components;
     var name = component.n,
@@ -75,7 +84,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     });
     var layout = fixGridAreaName(id);
     var childrensComponent = [].map.call(childrens, function (component, index) {
-      return _this2.renderComponents(component, index);
+      return _this3.renderComponents(component, index);
     });
     var Child = React.cloneElement( /*#__PURE__*/React.createElement(C, null), _extends({
       key: id + index,
@@ -96,7 +105,6 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     var _ref = this.state || {},
         schema = _ref.schema;
 
-    console.log(schema, "schema");
     if (!schema) return /*#__PURE__*/React.createElement("div", null);
     var rootComponent = ObsParser(schema)[0];
     return this.renderComponents(rootComponent, 0);
