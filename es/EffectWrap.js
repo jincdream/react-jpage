@@ -139,7 +139,7 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
     });
   };
 
-  _proto.doEffect = function doEffect(value, effect) {
+  _proto.doEffect = function doEffect(values, effect) {
     var component = this.refs[this.uid] || {};
     var Client = this.Client;
     var _effect$condition = effect.condition,
@@ -148,10 +148,10 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
     var type = handle.type,
         _handle$targetUid = handle.targetUid,
         targetUid = _handle$targetUid === void 0 ? this.uid : _handle$targetUid,
-        _handle$value = handle.value,
-        state = _handle$value === void 0 ? {} : _handle$value;
+        _handle$state = handle.state,
+        state = _handle$state === void 0 ? {} : _handle$state;
     var context = {
-      $value: value,
+      $value: values.length > 1 ? values : values[0],
       $state: component.state || {},
       $props: component.props || {}
     };
@@ -221,15 +221,19 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
           defaultHandle && defaultHandle.apply(this, args);
         }];
 
-        newProps[trigger] = function (value) {
+        newProps[trigger] = function () {
+          for (var _len2 = arguments.length, values = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            values[_key2] = arguments[_key2];
+          }
+
           triggers[trigger].forEach(function (fn) {
-            fn(value);
+            fn(values);
           });
         };
       }
 
-      triggers[trigger].push(function (v) {
-        _this3.doEffect(v, effect);
+      triggers[trigger].push(function (values) {
+        _this3.doEffect(values, effect);
       });
     });
     var C = React.cloneElement(children, _extends({

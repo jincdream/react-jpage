@@ -8,7 +8,7 @@ order: 1
 ````jsx
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import ReactJPage from 'react-j-page';
+import ReactJPage,{Layout} from 'react-j-page';
 
 class Input extends Component {
   render(){
@@ -42,6 +42,7 @@ class Page extends Component {
   render(){
     return <div style={{border: "1px solid #ccc"}}>
       page 
+      context: JSON.stringify{JSON.stringify(this.props.PageContext)}
       <div>
         {this.props.children}
       </div>
@@ -151,6 +152,7 @@ class App extends Component {
           })
         }}>reset</button>
         <ReactJPage
+          PageContext={{a:123}}
           components={{
             Block,
             Page,
@@ -162,7 +164,6 @@ class App extends Component {
     );
   }
 }
-
 ReactDOM.render((
   <App />
 ), mountNode);

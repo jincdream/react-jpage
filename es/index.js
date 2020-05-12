@@ -10,12 +10,13 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import ObsParser from 'obs-parser';
-import Layout from './layout';
+import Layout_ from './layout';
 import EffectWrap from './EffectWrap';
 import { updateSate, fixGridAreaName } from './common';
 var LocalComponents = {
-  Layout: Layout
+  Layout: Layout_
 };
+export var Layout = Layout_;
 
 var ReactJPage = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(ReactJPage, _React$Component);

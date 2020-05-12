@@ -57,7 +57,7 @@ export default class EffectWrap extends React.Component {
     let component = this.refs[this.uid] || {}
     let { Client } = this
     let { condition = "true", handle } = effect
-    let { type, targetUid = this.uid, value: state = {} } = handle
+    let { type, targetUid = this.uid, state = {} } = handle
     let context = {
       $value: values.length > 1 ? values : values[0],
       $state: component.state || {},

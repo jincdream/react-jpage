@@ -2,19 +2,16 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal'
 import ObsParser, { IComponentRenderDO, Base } from 'obs-parser'
 import { IProps, IState } from './index.d'
-import Layout from './layout'
+import Layout_ from './layout'
 import EffectWrap from './EffectWrap'
 import { updateSate, fixGridAreaName } from './common'
-import { Server, Client } from 'jinter'
-const LocalComponents: { [key: string]: React.ReactType } = { Layout }
 
-export default class ReactJPage<
-  AllComponents extends Base,
-  Components extends Base> extends React.Component<
-  IProps<AllComponents, Components>,
-  IState<AllComponents, Components>
+const LocalComponents: { [key: string]: React.ReactType } = { Layout: Layout_ }
+export const Layout = Layout_
+
+export default class ReactJPage<AllComponents extends Base, Components extends Base, Context> extends React.Component<IProps<AllComponents, Components, Context>, IState<AllComponents, Components>
   >{
-  constructor(props: IProps<AllComponents, Components>) {
+  constructor(props: IProps<AllComponents, Components, Context>) {
     super(props)
     // this.Server.onPost({
     //   path: "/save/effect"
@@ -31,9 +28,9 @@ export default class ReactJPage<
     schema: this.props.schema,
     components: {}
   }
-  componentWillReceiveProps(props: IProps<AllComponents, Components>) {
-    let keys = ["schema"] as (keyof IProps<AllComponents, Components>)[]
-    let state = updateSate<IProps<AllComponents, Components>>(keys, props, this.state)
+  componentWillReceiveProps(props: IProps<AllComponents, Components, Context>) {
+    let keys = ["schema"] as (keyof IProps<AllComponents, Components, Context>)[]
+    let state = updateSate<IProps<AllComponents, Components, Context>>(keys, props, this.state)
     this.setState(state)
   }
   componentDidMount() {
@@ -41,7 +38,7 @@ export default class ReactJPage<
   }
   updateSate(
     keys: (keyof IState<AllComponents, Components>)[],
-    receiveProps: IProps<AllComponents, Components>
+    receiveProps: IProps<AllComponents, Components, Context>
   ) {
     let state = {} as IState<AllComponents, Components>
     keys.forEach((key) => {
@@ -54,7 +51,7 @@ export default class ReactJPage<
     return state
   }
   renderComponents(component: IComponentRenderDO<AllComponents, Components>, index: number) {
-    let { components: ReactComponents } = this.props
+    let { components: ReactComponents, PageContext } = this.props
     let { n: name, d: data, id, childrens, e: effect } = component
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C = LocalComponents[name] || ReactComponents[name]
@@ -62,6 +59,7 @@ export default class ReactJPage<
     let layout = fixGridAreaName(id)
     let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, Components>, index: number) => this.renderComponents(component, index))
     let Child = React.cloneElement(<C />, {
+      PageContext,
       key: id + index,
       "data-com": id + '.' + index,
       ...data,
