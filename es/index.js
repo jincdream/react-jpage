@@ -70,7 +70,9 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   _proto.renderComponents = function renderComponents(component, index) {
     var _this3 = this;
 
-    var ReactComponents = this.props.components;
+    var _this$props = this.props,
+        ReactComponents = _this$props.components,
+        PageContext = _this$props.PageContext;
     var name = component.n,
         data = component.d,
         id = component.id,
@@ -88,6 +90,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       return _this3.renderComponents(component, index);
     });
     var Child = React.cloneElement( /*#__PURE__*/React.createElement(C, null), _extends({
+      PageContext: PageContext,
       key: id + index,
       "data-com": id + '.' + index
     }, data, {

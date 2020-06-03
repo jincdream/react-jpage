@@ -12,7 +12,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 import React from 'react';
 import { Client, Server } from 'jinter';
-import expressionRun from 'expression-run';
+import expressionRun from 'expression-run/esm5';
 import _set from 'lodash.set';
 var ServerName = "__Effect__" + Date.now().toString(32);
 var EffectServer = new Server(ServerName); // EffectWrap$1: {
