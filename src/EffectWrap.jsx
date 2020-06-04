@@ -1,6 +1,6 @@
 import React from 'react'
 import { Client, Server } from 'jinter'
-import expressionRun from 'expression-run/esm5'
+import expressionRun from 'expression-run'
 import _set from 'lodash.set'
 
 const ServerName = "__Effect__" + Date.now().toString(32)
