@@ -1,6 +1,6 @@
 {
   "name": "react-j-page",
-  "version": "0.1.4",
+  "version": "1.0.0-dev.1",
   "description": "json 2 page",
   "files": [
     "demo/",

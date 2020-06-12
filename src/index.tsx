@@ -2,14 +2,19 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal'
 import ObsParser, { IComponentRenderDO, Base } from 'obs-parser'
 import { IProps, IState } from './index.d'
-import Layout_ from './layout'
 import EffectWrap from './EffectWrap'
 import { updateSate, fixGridAreaName } from './common'
+import LayoutBox_ from './Layout/LayoutBox'
+import LayoutItem_ from './Layout/LayoutItem'
 
-const LocalComponents: { [key: string]: React.ReactType } = { Layout: Layout_ }
-export const Layout = Layout_
+const LocalComponents: { [key: string]: React.ReactType } = { Layout: LayoutBox_ }
+export const LayoutBox = LayoutBox_
+export const LayoutItem = LayoutItem_
 
-export default class ReactJPage<AllComponents extends Base, Components extends Base, Context> extends React.Component<IProps<AllComponents, Components, Context>, IState<AllComponents, Components>
+export default class ReactJPage<
+  AllComponents extends Base,
+  Components extends Base,
+  Context> extends React.Component<IProps<AllComponents, Components, Context>, IState<AllComponents, Components>
   >{
   constructor(props: IProps<AllComponents, Components, Context>) {
     super(props)
@@ -19,6 +24,8 @@ export default class ReactJPage<AllComponents extends Base, Components extends B
 
     // })
   }
+  PageContext: Readonly<Context | {}> = Object.freeze(this.props.PageContext || {})
+
   triggers: {
     [key: string]: () => void
   }[] = []
@@ -51,20 +58,21 @@ export default class ReactJPage<AllComponents extends Base, Components extends B
     return state
   }
   renderComponents(component: IComponentRenderDO<AllComponents, Components>, index: number) {
-    let { components: ReactComponents, PageContext } = this.props
+    let { components: ReactComponents } = this.props
     let { n: name, d: data, id, childrens, e: effect } = component
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
-    let C = LocalComponents[name] || ReactComponents[name]
+    let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
+
     if (!C) return <div key={component.id as string} />
+
     let layout = fixGridAreaName(id)
     let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, Components>, index: number) => this.renderComponents(component, index))
     let Child = React.cloneElement(<C />, {
-      PageContext,
-      key: id + index,
-      "data-com": id + '.' + index,
+      PageContext: this.PageContext,
       ...data,
-      style: { gridRow: layout, gridColumn: layout, ...data.style },
     }, childrensComponent)
+
+    Child = <LayoutItem_ key={id + index} name={name} nid={id} index={index} layout={layout}>{Child}</LayoutItem_>
     if (effect) return <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
     return Child
   }
