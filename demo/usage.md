@@ -49,7 +49,33 @@ class Page extends Component {
     </div>
   }
 }
-
+function A (props){
+  console.log(props,"aaaaa")
+  return <div>afasdasd
+  <div>{props.count}</div>
+  {"---" + props.visible}
+  </div>
+}
+function B(props){
+  let {changeContext,count} = props
+  console.log(count,"count")
+  return <div>B
+  {count}
+  <button onClick={()=>{
+    console.log(props)
+    changeContext({count: 213123})
+  }}>打算</button>
+  </div>
+}
+function C (props){
+  let {changeContext} = props
+  return <div>
+  <div><button onClick={()=>{
+    console.log(props)
+    changeContext({sad: 213123})
+  }}>打算fffff</button></div>
+  C</div>
+}
 class App extends Component {
   state = {
     schema: {
@@ -160,6 +186,42 @@ class App extends Component {
             Input
           }}
           schema={this.state.schema}/>
+
+
+          <ReactJPage
+          PageContext={{a:123}}
+          components={{
+            A,
+            B,
+            C,
+            Block
+          }}
+          schema={{
+            data: {
+              A$1: {
+                effectFileds: {
+                  visible: '$Context.B$1.count > $Context.C$1.page',
+                  count: "$Context.B$1.count"
+                },
+              },
+              B$1: {
+                fields: {
+                  count: 0,
+                },
+              },
+              C$1: {
+                fields: {
+                  page: 0,
+                },
+              },
+            },
+            hierarchy: {
+              root: 'Block',
+              structure: {
+                Block:["A$1",'B$1','C$1']
+              },
+            },
+          }}/>
       </div>
     );
   }

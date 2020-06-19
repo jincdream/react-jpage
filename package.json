@@ -25,10 +25,10 @@
   ],
   "dependencies": {
     "expression-run": "^0.2.2",
-    "jinter": "^0.1.1",
+    "jinter": "^0.2.0",
     "lodash.isequal": "^4.5.0",
     "lodash.set": "^4.3.2",
-    "obs-parser": "^0.3.1",
+    "obs-parser": "^0.4.1",
     "prop-types": "^15.5.8"
   },
   "devDependencies": {
@@ -36,6 +36,7 @@
     "@alifd/next": "1.x",
     "@ice/spec": "^0.1.1",
     "@types/lodash.isequal": "^4.5.5",
+    "@types/lodash.set": "^4.3.6",
     "@types/react": "^15.3.0",
     "@types/react-dom": "^15.3.0",
     "build-plugin-component": "^0.2.0",
