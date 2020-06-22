@@ -22,6 +22,7 @@ export default class ReactJPage<AllComponents extends Base, ComponentsData exten
     componentWillReceiveProps(props: IProps<AllComponents, ComponentsData, Context, LinkageContext>): void;
     componentDidMount(): void;
     componentWillUnmount(): void;
+    mounted(): void;
     updateSate(keys: (keyof IState<AllComponents, ComponentsData>)[], receiveProps: IProps<AllComponents, ComponentsData, Context, LinkageContext>): IState<AllComponents, ComponentsData>;
     renderComponents(component: IComponentRenderDO<AllComponents, ComponentsData>, index: number): JSX.Element;
     render(): JSX.Element;

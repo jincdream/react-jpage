@@ -85,10 +85,19 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
 
   _proto.componentDidMount = function componentDidMount() {
     this.LinkageContext.____inited____ = true;
+    this.mounted();
   };
 
   _proto.componentWillUnmount = function componentWillUnmount() {
     this.Server.close();
+  };
+
+  _proto.mounted = function mounted() {
+    this.Client.post({
+      server: this.ServerID,
+      path: "/linkage/update",
+      body: {}
+    });
   };
 
   _proto.updateSate = function updateSate(keys, receiveProps) {

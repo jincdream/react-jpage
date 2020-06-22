@@ -78,9 +78,17 @@ export default class ReactJPage<
   }
   componentDidMount() {
     this.LinkageContext.____inited____ = true
+    this.mounted()
   }
   componentWillUnmount() {
     this.Server.close()
+  }
+  mounted() {
+    this.Client.post({
+      server: this.ServerID,
+      path: "/linkage/update",
+      body: {}
+    })
   }
   updateSate(
     keys: (keyof IState<AllComponents, ComponentsData>)[],

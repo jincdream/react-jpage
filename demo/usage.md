@@ -222,6 +222,8 @@ class App extends Component {
               },
             },
           }}/>
+        <style>{`#usage{display:block !important}"`}</style>
+
       </div>
     );
   }

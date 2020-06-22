@@ -10,15 +10,14 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
 
     _this = _React$Component.call(this, props) || this;
     _this.state = {};
-    _this.paths = [];
     _this.eventId = void 0;
     _this.eventId = props.server.onPost({
       path: "/linkage/update"
     }, function (data) {
       var linkages = props.linkages.filter(function (l) {
-        return l.deps.findIndex(function (v) {
+        return data.id ? l.deps.findIndex(function (v) {
           return v === data.id;
-        }) >= 0;
+        }) >= 0 : true;
       }).map(function (l) {
         _this.state[l.target] = expressionRun(l.exp, {
           $Context: props.getContext()

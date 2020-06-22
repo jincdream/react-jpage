@@ -4,20 +4,19 @@ import { Server } from 'jinter';
 import expressionRun from 'expression-run'
 import _set from 'lodash.set'
 
-type Props<U> = {
-  linkages: Linkages<U>,
+type Props<Names> = {
+  linkages: Linkages<Names>,
   getContext: () => object
   children: React.ReactElement,
   server: Server
 }
-export default class LinkageWrap<U> extends React.Component<Props<U>>{
+export default class LinkageWrap<Names> extends React.Component<Props<Names>>{
   state: any = {}
-  paths: Array<string> = []
-  constructor(props: Props<U>) {
+  constructor(props: Props<Names>) {
     super(props);
-    this.eventId = props.server.onPost({ path: "/linkage/update" }, (data) => {
+    this.eventId = props.server.onPost({ path: "/linkage/update" }, (data: { id?: Names }) => {
       let linkages = props.linkages
-        .filter(l => l.deps.findIndex(v => v === data.id) >= 0)
+        .filter(l => data.id ? (l.deps.findIndex(v => v === data.id) >= 0) : true)
         .map(l => {
           this.state[l.target] = expressionRun(l.exp, { $Context: props.getContext() })
         })
