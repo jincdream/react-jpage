@@ -1,45 +1,81 @@
 import _extends from "@babel/runtime/helpers/extends";
-import _possibleConstructorReturn from "@babel/runtime/helpers/possibleConstructorReturn";
-import _getPrototypeOf from "@babel/runtime/helpers/getPrototypeOf";
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
-
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import ObsParser from 'obs-parser';
-import Layout_ from './layout';
 import EffectWrap from './EffectWrap';
 import { updateSate, fixGridAreaName } from './common';
+import LayoutBox_ from './Layout/LayoutBox';
+import LayoutItem_ from './Layout/LayoutItem';
+import LinkageWrap from './LinkageWrap';
+import { Client, Server } from 'jinter';
 var LocalComponents = {
-  Layout: Layout_
+  Layout: LayoutBox_
 };
-export var Layout = Layout_;
+export var LayoutBox = LayoutBox_;
+export var LayoutItem = LayoutItem_;
 
 var ReactJPage = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(ReactJPage, _React$Component);
 
-  var _super = _createSuper(ReactJPage);
-
   function ReactJPage(props) {
     var _this;
 
-    _this = _React$Component.call(this, props) || this; // this.Server.onPost({
-    //   path: "/save/effect"
-    // }, async () => {
-    // })
-
+    _this = _React$Component.call(this, props) || this;
+    _this.LinkageContext = void 0;
+    _this.ServerID = "ReactJPage_" + Date.now().toString(32);
+    _this.Server = new Server(_this.ServerID);
+    _this.Client = new Client(_this.ServerID);
+    _this.PageContext = Object.freeze(_this.props.PageContext || {});
     _this.triggers = [];
     _this.state = {
       schema: _this.props.schema,
       components: {}
     };
+
+    _this.initLinkages();
+
     return _this;
   }
 
   var _proto = ReactJPage.prototype;
+
+  _proto.initLinkages = function initLinkages() {
+    var _this2 = this;
+
+    var linkageContext = new Proxy(this.props.LinkageContext || {}, {
+      set: function set(obj, componentId, value) {
+        if (value === void 0) {
+          value = {};
+        }
+
+        if (componentId === "____inited____") {
+          obj.____inited____ = true;
+          return true;
+        }
+
+        if (!obj[componentId]) {
+          obj[componentId] = {};
+        }
+
+        if (typeof value !== "object") return false;
+        obj[componentId] = _extends({}, obj[componentId], value);
+
+        if (obj.____inited____) {
+          _this2.Client.post({
+            server: _this2.ServerID,
+            path: "/linkage/update",
+            body: {
+              id: componentId
+            }
+          });
+        }
+
+        return true;
+      }
+    });
+    this.LinkageContext = linkageContext;
+  };
 
   _proto.componentWillReceiveProps = function componentWillReceiveProps(props) {
     var keys = ["schema"];
@@ -47,15 +83,20 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     this.setState(state);
   };
 
-  _proto.componentDidMount = function componentDidMount() {// console.log("gpaggg")
+  _proto.componentDidMount = function componentDidMount() {
+    this.LinkageContext.____inited____ = true;
+  };
+
+  _proto.componentWillUnmount = function componentWillUnmount() {
+    this.Server.close();
   };
 
   _proto.updateSate = function updateSate(keys, receiveProps) {
-    var _this2 = this;
+    var _this3 = this;
 
     var state = {};
     keys.forEach(function (key) {
-      var value = _this2.state[key];
+      var value = _this3.state[key];
       var receiveValue = receiveProps[key];
 
       if (isEqual(value, receiveValue)) {
@@ -68,16 +109,17 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.renderComponents = function renderComponents(component, index) {
-    var _this3 = this;
+    var _this4 = this;
 
-    var _this$props = this.props,
-        ReactComponents = _this$props.components,
-        PageContext = _this$props.PageContext;
+    var ReactComponents = this.props.components;
     var name = component.n,
         data = component.d,
         id = component.id,
         childrens = component.childrens,
-        effect = component.e;
+        effect = component.e,
+        _component$l = component.l,
+        linkages = _component$l === void 0 ? [] : _component$l;
+    this.LinkageContext[id] = data;
     name = name.replace(/^(\S)/, function (m, a) {
       return a.toUpperCase();
     });
@@ -87,21 +129,41 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     });
     var layout = fixGridAreaName(id);
     var childrensComponent = [].map.call(childrens, function (component, index) {
-      return _this3.renderComponents(component, index);
+      return _this4.renderComponents(component, index);
     });
-    var Child = React.cloneElement( /*#__PURE__*/React.createElement(C, null), _extends({
-      PageContext: PageContext,
+    var Child = /*#__PURE__*/React.cloneElement( /*#__PURE__*/React.createElement(C, null), _extends({
+      PageContext: this.PageContext,
+      changeContext: function changeContext(data) {
+        _this4.LinkageContext[id] = data;
+      }
+    }, data), childrensComponent);
+
+    if (effect) {
+      Child = /*#__PURE__*/React.createElement(EffectWrap, _extends({
+        key: id + index
+      }, effect), Child);
+    } else {
+      Child = /*#__PURE__*/React.createElement(LinkageWrap, {
+        getContext: function getContext() {
+          var obj = {};
+          Object.keys(_this4.LinkageContext).forEach(function (n) {
+            return obj[n] = _this4.LinkageContext[n];
+          });
+          return obj;
+        },
+        key: id + index,
+        server: this.Server,
+        linkages: linkages
+      }, Child);
+    }
+
+    Child = /*#__PURE__*/React.createElement(LayoutItem_, {
       key: id + index,
-      "data-com": id + '.' + index
-    }, data, {
-      style: _extends({
-        gridRow: layout,
-        gridColumn: layout
-      }, data.style)
-    }), childrensComponent);
-    if (effect) return /*#__PURE__*/React.createElement(EffectWrap, _extends({
-      key: id + index
-    }, effect), Child);
+      name: name,
+      nid: id,
+      index: index,
+      layout: layout
+    }, Child);
     return Child;
   };
 

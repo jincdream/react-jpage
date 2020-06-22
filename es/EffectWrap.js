@@ -2,14 +2,7 @@ import _objectWithoutPropertiesLoose from "@babel/runtime/helpers/objectWithoutP
 import _extends from "@babel/runtime/helpers/extends";
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import _asyncToGenerator from "@babel/runtime/helpers/asyncToGenerator";
-import _possibleConstructorReturn from "@babel/runtime/helpers/possibleConstructorReturn";
-import _getPrototypeOf from "@babel/runtime/helpers/getPrototypeOf";
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
-
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 import React from 'react';
 import { Client, Server } from 'jinter';
 import expressionRun from 'expression-run';
@@ -40,8 +33,6 @@ var EffectServer = new Server(ServerName); // EffectWrap$1: {
 
 var EffectWrap = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(EffectWrap, _React$Component);
-
-  var _super = _createSuper(EffectWrap);
 
   function EffectWrap(props) {
     var _this;
@@ -236,9 +227,9 @@ var EffectWrap = /*#__PURE__*/function (_React$Component) {
         _this3.doEffect(values, effect);
       });
     });
-    var C = React.cloneElement(children, _extends({
+    var C = /*#__PURE__*/React.cloneElement(children, _extends({
       ref: this.uid
-    }, childrenProps, {}, newProps));
+    }, childrenProps, newProps));
     return /*#__PURE__*/React.createElement("div", myProps, visible ? C : null);
   };
 

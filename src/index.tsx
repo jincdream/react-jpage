@@ -115,20 +115,23 @@ export default class ReactJPage<
       ...data,
     }, childrensComponent)
 
-    Child = <LinkageWrap<keyof ComponentsData[keyof ComponentsData]>
-      getContext={() => {
-        let obj: { [key: string]: any } = {}
-        Object.keys(this.LinkageContext).forEach(n => obj[n] = this.LinkageContext[n])
-        return obj
-      }}
-      key={id + index}
-      server={this.Server}
-      linkages={linkages}>
-      {Child}
-    </LinkageWrap>
-    Child = <LayoutItem_ key={id + index} name={name} nid={id} index={index} layout={layout}>{Child}</LayoutItem_>
+    if (effect) {
+      Child = <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
+    } else {
+      Child = <LinkageWrap<keyof ComponentsData[keyof ComponentsData]>
+        getContext={() => {
+          let obj: { [key: string]: any } = {}
+          Object.keys(this.LinkageContext).forEach(n => obj[n] = this.LinkageContext[n])
+          return obj
+        }}
+        key={id + index}
+        server={this.Server}
+        linkages={linkages}>
+        {Child}
+      </LinkageWrap>
+    }
 
-    if (effect) return <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
+    Child = <LayoutItem_ key={id + index} name={name} nid={id} index={index} layout={layout}>{Child}</LayoutItem_>
     return Child
   }
   render() {

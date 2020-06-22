@@ -199,7 +199,7 @@ class App extends Component {
           schema={{
             data: {
               A$1: {
-                effectFileds: {
+                effectFields: {
                   visible: '$Context.B$1.count > $Context.C$1.page',
                   count: "$Context.B$1.count"
                 },
