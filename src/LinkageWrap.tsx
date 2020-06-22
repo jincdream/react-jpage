@@ -18,7 +18,8 @@ export default class LinkageWrap<Names> extends React.Component<Props<Names>>{
       let linkages = props.linkages
         .filter(l => data.id ? (l.deps.findIndex(v => v === data.id) >= 0) : true)
         .map(l => {
-          this.state[l.target] = expressionRun(l.exp, { $Context: props.getContext() })
+          let target = l.target as unknown as string
+          _set(this.state, target, expressionRun(l.exp, { $Context: props.getContext() }))
         })
       linkages.length > 0 && this.forceUpdate()
     })
