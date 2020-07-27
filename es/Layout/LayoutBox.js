@@ -14,7 +14,7 @@ var Layout = /*#__PURE__*/function (_Component) {
     }
 
     _this = _Component.call.apply(_Component, [this].concat(args)) || this;
-    _this.state = _this.props;
+    _this.state = _extends({}, _this.props);
     return _this;
   }
 

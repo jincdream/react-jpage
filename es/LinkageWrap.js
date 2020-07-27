@@ -1,6 +1,7 @@
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
 import * as React from 'react';
 import expressionRun from 'expression-run';
+import _set from 'lodash.set';
 
 var LinkageWrap = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(LinkageWrap, _React$Component);
@@ -19,9 +20,11 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
           return v === data.id;
         }) >= 0 : true;
       }).map(function (l) {
-        _this.state[l.target] = expressionRun(l.exp, {
+        var target = l.target;
+
+        _set(_this.state, target, expressionRun(l.exp, {
           $Context: props.getContext()
-        });
+        }));
       });
       linkages.length > 0 && _this.forceUpdate();
     });
