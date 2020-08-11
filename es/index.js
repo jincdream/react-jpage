@@ -4,7 +4,7 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import ObsParser from 'obs-parser';
 import EffectWrap from './EffectWrap';
-import { updateSate, fixGridAreaName } from './common';
+import { updateSate, fixGridAreaName, getScriptFilds } from './common';
 import LayoutBox_ from './Layout/LayoutBox';
 import LayoutItem_ from './Layout/LayoutItem';
 import LinkageWrap from './LinkageWrap';
@@ -127,12 +127,14 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
         childrens = component.childrens,
         effect = component.e,
         _component$l = component.l,
-        linkages = _component$l === void 0 ? [] : _component$l;
+        linkages = _component$l === void 0 ? [] : _component$l,
+        scriptFields = component.s;
     this.LinkageContext[id] = data;
     name = name.replace(/^(\S)/, function (m, a) {
       return a.toUpperCase();
     });
     var C = LocalComponents[name] || ReactComponents[name];
+    var sFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext) : {};
     if (!C) return /*#__PURE__*/React.createElement("div", {
       key: component.id
     });
@@ -145,7 +147,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       changeContext: function changeContext(data) {
         _this4.LinkageContext[id] = data;
       }
-    }, data), childrensComponent);
+    }, data, sFields), childrensComponent);
 
     if (effect) {
       Child = /*#__PURE__*/React.createElement(EffectWrap, _extends({

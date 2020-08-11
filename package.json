@@ -1,6 +1,6 @@
 {
   "name": "react-j-page",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "json 2 page",
   "files": [
     "demo/",
@@ -25,10 +25,10 @@
   ],
   "dependencies": {
     "expression-run": "^0.2.2",
-    "jinter": "0.2.2",
+    "jinter": "^0.4.2",
     "lodash.isequal": "^4.5.0",
     "lodash.set": "^4.3.2",
-    "obs-parser": "^0.4.3",
+    "obs-parser": "^0.5.0",
     "prop-types": "^15.5.8"
   },
   "devDependencies": {
@@ -55,5 +55,5 @@
     "title": "demo component",
     "category": "Others"
   },
-  "homepage": "https://unpkg.com/react-j-page@1.0.4/build/index.html"
+  "homepage": "https:/unpkg.com/react-j-page@1.0.7/build/index.html"
 }

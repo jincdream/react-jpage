@@ -63,7 +63,7 @@ function B(props){
   {count}
   <button onClick={()=>{
     console.log(props)
-    changeContext({count: 213123})
+    changeContext({count: 3})
   }}>打算</button>
   </div>
 }
@@ -72,9 +72,13 @@ function C (props){
   return <div>
   <div><button onClick={()=>{
     console.log(props)
-    changeContext({sad: 213123})
+    changeContext({page: 4})
   }}>打算fffff</button></div>
   C</div>
+}
+function D (props){
+  let {count,name} = props
+  return <div>D:{count}<p>name: {name}</p></div>
 }
 class App extends Component {
   state = {
@@ -189,11 +193,13 @@ class App extends Component {
 
 
           <ReactJPage
-          PageContext={{a:123}}
+
+          PageContext={{a:123, count: 999, data: {name :"jsac"}}}
           components={{
             A,
             B,
             C,
+            D,
             Block
           }}
           schema={{
@@ -214,11 +220,17 @@ class App extends Component {
                   page: 0,
                 },
               },
+              D$1: {
+                scriptFields: {
+                  count: "$Context.count + 1",
+                  name: "$Context.data.name"
+                }
+              }
             },
             hierarchy: {
               root: 'Block',
               structure: {
-                Block:["A$1",'B$1','C$1']
+                Block:["A$1",'B$1','C$1','D$1']
               },
             },
           }}/>

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import isEqual from 'lodash.isequal'
-import ObsParser, { IComponentRenderDO, Base } from 'obs-parser'
+import ObsParser, { IComponentRenderDO, Base, EffectFields } from 'obs-parser'
 import { IProps, IState, LinkageContextBase } from './types'
 import EffectWrap from './EffectWrap'
-import { updateSate, fixGridAreaName } from './common'
+import { updateSate, fixGridAreaName, getScriptFilds } from './common'
 import LayoutBox_ from './Layout/LayoutBox'
 import LayoutItem_ from './Layout/LayoutItem'
 import LinkageWrap from './LinkageWrap'
@@ -106,11 +106,11 @@ export default class ReactJPage<
   }
   renderComponents(component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) {
     let { components: ReactComponents } = this.props
-    let { n: name, d: data, id, childrens, e: effect, l: linkages = [] } = component
+    let { n: name, d: data, id, childrens, e: effect, l: linkages = [], s: scriptFields } = component
     this.LinkageContext[id] = data
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
-
+    let sFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>>(scriptFields, this.PageContext) : {}
     if (!C) return <div key={component.id as string} />
 
     let layout = fixGridAreaName(id)
@@ -121,6 +121,7 @@ export default class ReactJPage<
         this.LinkageContext[id] = data
       },
       ...data,
+      ...sFields,
     }, childrensComponent)
 
     if (effect) {

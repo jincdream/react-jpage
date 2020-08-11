@@ -14,7 +14,13 @@ var Layout = /*#__PURE__*/function (_Component) {
     }
 
     _this = _Component.call.apply(_Component, [this].concat(args)) || this;
-    _this.state = _extends({}, _this.props);
+    _this.state = {
+      template: _this.props.template,
+      rows: _this.props.rows,
+      columns: _this.props.columns,
+      gap: _this.props.gap,
+      style: _this.props.style
+    };
     return _this;
   }
 
