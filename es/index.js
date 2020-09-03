@@ -134,20 +134,23 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       return a.toUpperCase();
     });
     var C = LocalComponents[name] || ReactComponents[name];
-    var sFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext) : {};
     if (!C) return /*#__PURE__*/React.createElement("div", {
       key: component.id
     });
-    var layout = fixGridAreaName(id);
-    var childrensComponent = [].map.call(childrens, function (component, index) {
-      return _this4.renderComponents(component, index);
-    });
-    var Child = /*#__PURE__*/React.cloneElement( /*#__PURE__*/React.createElement(C, null), _extends({
+    var nFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext, data) : {};
+
+    var componentProps = _extends({
       PageContext: this.PageContext,
       changeContext: function changeContext(data) {
         _this4.LinkageContext[id] = data;
       }
-    }, data, sFields), childrensComponent);
+    }, nFields);
+
+    var layout = fixGridAreaName(id);
+    var childrensComponent = [].map.call(childrens, function (component, index) {
+      return _this4.renderComponents(component, index);
+    });
+    var Child = /*#__PURE__*/React.cloneElement( /*#__PURE__*/React.createElement(C, null), componentProps, childrensComponent);
 
     if (effect) {
       Child = /*#__PURE__*/React.createElement(EffectWrap, _extends({

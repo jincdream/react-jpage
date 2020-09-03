@@ -16,8 +16,11 @@ export function updateSate(keys, receiveProps, thisState) {
 export function fixGridAreaName(name) {
   return name.replace(/\$|\!|\@|\#|\%|\^|\&|\*|\-|\+/g, '__');
 }
-export function getScriptFilds(obj, context) {
-  var rz = {};
+export function getScriptFilds(obj, context, rz) {
+  if (rz === void 0) {
+    rz = {};
+  }
+
   Object.keys(obj).forEach(function (k) {
     var n = obj[k];
     var value = expressionRun(n, {
