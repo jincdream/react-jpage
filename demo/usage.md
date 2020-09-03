@@ -78,7 +78,12 @@ function C (props){
 }
 function D (props){
   let {count,name} = props
-  return <div>D:{count}<p>name: {name}</p></div>
+  let q = JSON.stringify(props,"\r",2)
+  return <div>D:{count}<p>name: {name}</p>
+  <pre>
+    {q}
+  </pre>
+  </div>
 }
 class App extends Component {
   state = {
@@ -223,7 +228,16 @@ class App extends Component {
               D$1: {
                 scriptFields: {
                   count: "$Context.count + 1",
-                  name: "$Context.data.name"
+                  name: "$Context.data.name",
+                  "a.b.c": "$Context.count"
+                },
+                fields: {
+                  a: {
+                    b: {
+                      c: 321,
+                      d: 456
+                    }
+                  }
                 }
               }
             },

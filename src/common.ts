@@ -22,12 +22,11 @@ export function fixGridAreaName(name: string) {
   return name.replace(/\$|\!|\@|\#|\%|\^|\&|\*|\-|\+/g, '__')
 }
 
-export function getScriptFilds<O extends object, C>(obj: { [k in keyof O]: string }, context: C): O {
-  let rz = {} as O
+export function getScriptFilds<O extends object, C, R extends object>(obj: { [k in keyof O]: string }, context: C, rz: R = {} as R): R {
   Object.keys(obj).forEach((k: keyof O) => {
     let n = obj[k]
     let value = expressionRun(n, { $Context: context })
-    _set<O>(rz, k, value)
+    _set<R>(rz, k, value)
   })
   return rz
 }

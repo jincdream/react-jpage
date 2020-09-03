@@ -102,6 +102,7 @@ export default class ReactJPage<
         Object.defineProperty(state, key, { value: receiveValue })
       }
     })
+
     return state
   }
   renderComponents(component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) {
@@ -110,20 +111,19 @@ export default class ReactJPage<
     this.LinkageContext[id] = data
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
-    let sFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>>(scriptFields, this.PageContext) : {}
     if (!C) return <div key={component.id as string} />
 
-    let layout = fixGridAreaName(id)
-    let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) => this.renderComponents(component, index))
-    let Child = React.cloneElement(<C />, {
+    let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : {}
+    let componentProps = {
       PageContext: this.PageContext,
       changeContext: (data: Partial<ComponentsData[keyof ComponentsData]>) => {
         this.LinkageContext[id] = data
       },
-      ...data,
-      ...sFields,
-    }, childrensComponent)
-
+      ...nFields,
+    }
+    let layout = fixGridAreaName(id)
+    let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) => this.renderComponents(component, index))
+    let Child = React.cloneElement(<C />, componentProps, childrensComponent)
     if (effect) {
       Child = <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
     } else {
