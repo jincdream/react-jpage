@@ -9,8 +9,8 @@ import LayoutItem_ from './Layout/LayoutItem'
 import LinkageWrap from './LinkageWrap'
 import { Client, Server } from 'jinter';
 
-
 const LocalComponents: { [key: string]: React.ReactType } = { Layout: LayoutBox_ }
+// Built into the layout component
 export const LayoutBox = LayoutBox_
 export const LayoutItem = LayoutItem_
 
@@ -32,7 +32,7 @@ export default class ReactJPage<
   initLinkages() {
     let linkageContext = new Proxy<LinkageContextBase<LinkageContext>>((this.props.LinkageContext || {}) as LinkageContextBase<LinkageContext>, {
       set: (obj: any, componentId: string, value = {}) => {
-
+        // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true
           return true
@@ -41,7 +41,10 @@ export default class ReactJPage<
           obj[componentId] = {}
         }
 
-        if (typeof value !== "object") return false
+        if (typeof value !== "object") {
+          console.error(`[${componentId} = ${value}]: It's not a object`)
+          return false
+        }
 
         obj[componentId] = {
           ...obj[componentId],
@@ -60,13 +63,13 @@ export default class ReactJPage<
     })
     this.LinkageContext = linkageContext
   }
+
+  // To avoid being the external changes
   PageContext: Readonly<Context | {}> = Object.freeze(this.props.PageContext || {})
 
   triggers: {
     [key: string]: () => void
   }[] = []
-  // serverId = "____ReactJPage____" + Date.now().toString(32)
-  // Server = new Server(this.serverId)
   state = {
     schema: this.props.schema,
     components: {}
@@ -77,6 +80,7 @@ export default class ReactJPage<
     this.setState(state)
   }
   componentDidMount() {
+    // Initialize the end
     this.LinkageContext.____inited____ = true
     this.mounted()
   }
@@ -113,20 +117,23 @@ export default class ReactJPage<
     let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
     if (!C) return <div key={component.id as string} />
 
-    let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : {}
+    let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : data
     let componentProps = {
       PageContext: this.PageContext,
       changeContext: (data: Partial<ComponentsData[keyof ComponentsData]>) => {
         this.LinkageContext[id] = data
       },
-      ...nFields,
+      ...nFields
     }
     let layout = fixGridAreaName(id)
     let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) => this.renderComponents(component, index))
     let Child = React.cloneElement(<C />, componentProps, childrensComponent)
+
     if (effect) {
+      // Passive linkage
       Child = <EffectWrap key={id + index} {...effect}>{Child}</EffectWrap>
     } else {
+      // Active linkage
       Child = <LinkageWrap<keyof ComponentsData[keyof ComponentsData]>
         getContext={() => {
           let obj: { [key: string]: any } = {}

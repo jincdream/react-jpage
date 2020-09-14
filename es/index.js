@@ -137,7 +137,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     if (!C) return /*#__PURE__*/React.createElement("div", {
       key: component.id
     });
-    var nFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext, data) : {};
+    var nFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext, data) : data;
 
     var componentProps = _extends({
       PageContext: this.PageContext,
