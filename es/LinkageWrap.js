@@ -4,6 +4,7 @@ import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
 import * as React from 'react';
 import expressionRun from 'expression-run';
 import _set from 'lodash.set';
+import _merge from 'lodash.merge';
 
 var LinkageWrap = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(LinkageWrap, _React$Component);
@@ -29,6 +30,7 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
                   }) >= 0 : true;
                 }).map(function (l) {
                   var target = l.target;
+                  console.log(_this.state, l.exp, target, "this.statethis.state");
 
                   _set(_this.state, target, expressionRun(l.exp, {
                     $Context: props.getContext()
@@ -59,9 +61,10 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
 
   _proto.render = function render() {
     var children = this.props.children;
+    var cProps = children.props;
     var C = children; // return React.cloneElement(C, this.state)
 
-    return /*#__PURE__*/React.cloneElement(C, this.state);
+    return /*#__PURE__*/React.cloneElement(C, _merge(cProps, this.state));
   };
 
   return LinkageWrap;

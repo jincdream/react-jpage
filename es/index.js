@@ -50,7 +50,8 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
           value = {};
         }
 
-        // Has not yet been initialized
+        console.log(componentId, "componentId", value, obj); // Has not yet been initialized
+
         if (componentId === "____inited____") {
           obj.____inited____ = true;
           return true;
@@ -137,7 +138,6 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
         _component$l = component.l,
         linkages = _component$l === void 0 ? [] : _component$l,
         scriptFields = component.s;
-    this.LinkageContext[id] = data;
     name = name.replace(/^(\S)/, function (m, a) {
       return a.toUpperCase();
     });
@@ -154,6 +154,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       }
     }, nFields);
 
+    this.LinkageContext[id] = nFields;
     var layout = fixGridAreaName(id);
     var childrensComponent = [].map.call(childrens, function (component, index) {
       return _this4.renderComponents(component, index);
