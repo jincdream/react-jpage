@@ -10,6 +10,18 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactJPage,{Layout} from 'react-j-page';
 
+function CompoenntA(props){
+  return <div>{props.data.count}</div>
+}
+
+function CompoenntB(props){
+  return <button onClick={()=>{
+    props.changeContext({
+      count: Date.now()
+    })
+  }}>点击联动 CompoenntA </button>
+}
+
 class Input extends Component {
   render(){
     return <input onChange={(e)=>{
@@ -249,11 +261,50 @@ class App extends Component {
             },
           }}/>
         <style>{`#usage{display:block !important}"`}</style>
-
+        <div>
+        <hr />
+        <ReactJPage
+          components={{CompoenntA,CompoenntB}}
+          schema={{
+            data: {
+              CompoenntA: {
+                effectFields: {
+                  "data.count": "$Context.CompoenntB.count + 1"
+                },
+                fields: {
+                  data: {
+                    a: 1
+                  }
+                }
+              },
+              CompoenntB: {
+                fields: {
+                  count: 2
+                }
+              },
+              Layout: {
+                fields: {
+                  template:[["CompoenntA","CompoenntB"]]
+                }
+              }
+            },
+            hierarchy: {
+              component: [],
+              componentDetail: {},
+              root: "Layout",
+              structure: {
+                Layout: ["CompoenntA","CompoenntB"]
+              }
+            }
+          }}
+        ></ReactJPage>
+        </div>
       </div>
     );
   }
 }
+
+
 ReactDOM.render((
   <App />
 ), mountNode);

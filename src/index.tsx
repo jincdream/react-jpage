@@ -32,6 +32,7 @@ export default class ReactJPage<
   initLinkages() {
     let linkageContext = new Proxy<LinkageContextBase<LinkageContext>>((this.props.LinkageContext || {}) as LinkageContextBase<LinkageContext>, {
       set: (obj: any, componentId: string, value = {}) => {
+        console.log(componentId, "componentId", value, obj)
         // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true
@@ -112,7 +113,6 @@ export default class ReactJPage<
   renderComponents(component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) {
     let { components: ReactComponents } = this.props
     let { n: name, d: data, id, childrens, e: effect, l: linkages = [], s: scriptFields } = component
-    this.LinkageContext[id] = data
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
     if (!C) return <div key={component.id as string} />
@@ -125,6 +125,9 @@ export default class ReactJPage<
       },
       ...nFields
     }
+
+    this.LinkageContext[id] = nFields
+
     let layout = fixGridAreaName(id)
     let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) => this.renderComponents(component, index))
     let Child = React.cloneElement(<C />, componentProps, childrensComponent)

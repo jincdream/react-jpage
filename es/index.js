@@ -11,7 +11,8 @@ import LinkageWrap from './LinkageWrap';
 import { Client, Server } from 'jinter';
 var LocalComponents = {
   Layout: LayoutBox_
-};
+}; // Built into the layout component
+
 export var LayoutBox = LayoutBox_;
 export var LayoutItem = LayoutItem_;
 
@@ -49,6 +50,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
           value = {};
         }
 
+        // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true;
           return true;
@@ -58,7 +60,11 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
           obj[componentId] = {};
         }
 
-        if (typeof value !== "object") return false;
+        if (typeof value !== "object") {
+          console.error("[" + componentId + " = " + value + "]: It's not a object");
+          return false;
+        }
+
         obj[componentId] = _extends({}, obj[componentId], value);
 
         if (obj.____inited____) {
@@ -75,7 +81,8 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       }
     });
     this.LinkageContext = linkageContext;
-  };
+  } // To avoid being the external changes
+  ;
 
   _proto.componentWillReceiveProps = function componentWillReceiveProps(props) {
     var keys = ["schema"];
@@ -84,6 +91,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.componentDidMount = function componentDidMount() {
+    // Initialize the end
     this.LinkageContext.____inited____ = true;
     this.mounted();
   };
@@ -153,10 +161,12 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     var Child = /*#__PURE__*/React.cloneElement( /*#__PURE__*/React.createElement(C, null), componentProps, childrensComponent);
 
     if (effect) {
+      // Passive linkage
       Child = /*#__PURE__*/React.createElement(EffectWrap, _extends({
         key: id + index
       }, effect), Child);
     } else {
+      // Active linkage
       Child = /*#__PURE__*/React.createElement(LinkageWrap, {
         getContext: function getContext() {
           var obj = {};
