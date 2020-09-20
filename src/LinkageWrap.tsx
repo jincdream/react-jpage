@@ -19,7 +19,7 @@ export default class LinkageWrap<Names> extends React.Component<Props<Names>>{
         .filter(l => data.id ? (l.deps.findIndex(v => v === data.id) >= 0) : true)
         .map(l => {
           let target = l.target as unknown as string
-          console.log(this.state, l.exp, target, "this.statethis.state")
+          // console.log(this.state, l.exp, target, "this.statethis.state")
           _set(this.state, target, expressionRun(l.exp, { $Context: props.getContext() }))
         })
       linkages.length > 0 && this.forceUpdate()
@@ -31,7 +31,7 @@ export default class LinkageWrap<Names> extends React.Component<Props<Names>>{
   }
   render() {
     let { children } = this.props
-    let { props: cProps, } = children
+    let { props: cProps } = children
     let C = children
     // return React.cloneElement(C, this.state)
     return React.cloneElement(C, _merge(cProps, this.state))
