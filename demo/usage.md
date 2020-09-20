@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 import ReactJPage,{Layout} from 'react-j-page';
 
 function CompoenntA(props){
-  return <div>{props.data.count}</div>
+  return <div>{props.data.count} - {props.data.a}</div>
 }
 
 function CompoenntB(props){

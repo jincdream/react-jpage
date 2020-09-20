@@ -1,6 +1,6 @@
 {
   "name": "react-j-page",
-  "version": "1.0.12",
+  "version": "1.0.14",
   "description": "json 2 page",
   "files": [
     "demo/",
@@ -28,7 +28,6 @@
     "expression-run": "^0.2.2",
     "jinter": "^0.4.2",
     "lodash.isequal": "^4.5.0",
-    "lodash.merge": "^4.6.2",
     "lodash.set": "^4.3.2",
     "obs-parser": "^0.5.0"
   },
@@ -37,7 +36,6 @@
     "@alifd/next": "1.x",
     "@ice/spec": "^0.1.1",
     "@types/lodash.isequal": "^4.5.5",
-    "@types/lodash.merge": "^4.6.6",
     "@types/lodash.set": "^4.3.6",
     "@types/react": "^15.3.0",
     "@types/react-dom": "^15.3.0",
@@ -59,5 +57,5 @@
     "title": "demo component",
     "category": "Others"
   },
-  "homepage": "https://unpkg.com/react-j-page@1.0.11/build/index.html"
+  "homepage": "https://unpkg.com/react-j-page@1.0.13/build/index.html"
 }
