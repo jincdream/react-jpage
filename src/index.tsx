@@ -32,7 +32,6 @@ export default class ReactJPage<
   initLinkages() {
     let linkageContext = new Proxy<LinkageContextBase<LinkageContext>>((this.props.LinkageContext || {}) as LinkageContextBase<LinkageContext>, {
       set: (obj: any, componentId: string, value = {}) => {
-        console.log(componentId, "componentId", value, obj)
         // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true

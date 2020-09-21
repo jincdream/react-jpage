@@ -1,5 +1,6 @@
 import _regeneratorRuntime from "@babel/runtime/regenerator";
 import _asyncToGenerator from "@babel/runtime/helpers/asyncToGenerator";
+import _extends from "@babel/runtime/helpers/extends";
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
 import * as React from 'react';
 import expressionRun from 'expression-run';
@@ -12,7 +13,7 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
     var _this;
 
     _this = _React$Component.call(this, props) || this;
-    _this.state = _this.props.children.props || {};
+    _this.state = _extends({}, _this.props.children.props || {});
     _this.eventId = void 0;
     _this.eventId = props.server.onPost({
       path: "/linkage/update"

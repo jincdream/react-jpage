@@ -50,8 +50,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
           value = {};
         }
 
-        console.log(componentId, "componentId", value, obj); // Has not yet been initialized
-
+        // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true;
           return true;
