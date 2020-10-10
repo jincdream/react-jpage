@@ -46,10 +46,6 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
 
     var linkageContext = new Proxy(this.props.LinkageContext || {}, {
       set: function set(obj, componentId, value) {
-        if (value === void 0) {
-          value = {};
-        }
-
         // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true;
@@ -60,12 +56,11 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
           obj[componentId] = {};
         }
 
-        if (typeof value !== "object") {
-          console.error("[" + componentId + " = " + value + "]: It's not a object");
-          return false;
+        if ({}.toString.call(value).toLocaleLowerCase() === "[object object]") {
+          obj[componentId] = _extends({}, obj[componentId], value);
+        } else {
+          obj[componentId] = value;
         }
-
-        obj[componentId] = _extends({}, obj[componentId], value);
 
         if (obj.____inited____) {
           _this2.Client.post({

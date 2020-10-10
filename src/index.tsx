@@ -31,24 +31,23 @@ export default class ReactJPage<
   }
   initLinkages() {
     let linkageContext = new Proxy<LinkageContextBase<LinkageContext>>((this.props.LinkageContext || {}) as LinkageContextBase<LinkageContext>, {
-      set: (obj: any, componentId: string, value = {}) => {
+      set: (obj: any, componentId: string, value) => {
         // Has not yet been initialized
         if (componentId === "____inited____") {
           obj.____inited____ = true
           return true
         }
-        if (!obj[componentId]) {
-          obj[componentId] = {}
-        }
+        // if (!obj[componentId]) {
+        //   obj[componentId] = {}
+        // }
 
-        if (typeof value !== "object") {
-          console.error(`[${componentId} = ${value}]: It's not a object`)
-          return false
-        }
-
-        obj[componentId] = {
-          ...obj[componentId],
-          ...value
+        if (({}).toString.call(value).toLocaleLowerCase() === "[object object]") {
+          obj[componentId] = {
+            ...obj[componentId],
+            ...value
+          }
+        } else {
+          obj[componentId] = value
         }
 
         if (obj.____inited____) {

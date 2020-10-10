@@ -1,6 +1,6 @@
 {
   "name": "react-j-page",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "json 2 page",
   "files": [
     "demo/",
@@ -57,5 +57,5 @@
     "title": "demo component",
     "category": "Others"
   },
-  "homepage": "https://unpkg.com/react-j-page@1.1.0/build/index.html"
+  "homepage": "https://unpkg.com/react-j-page@1.1.1/build/index.html"
 }
