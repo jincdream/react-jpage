@@ -121,6 +121,13 @@ export default class ReactJPage<
       changeContext: (data: Partial<ComponentsData[keyof ComponentsData]>) => {
         this.LinkageContext[id] = data
       },
+      updateContext: () => {
+        this.Client.post({
+          server: this.ServerID,
+          path: "/linkage/update",
+          body: {}
+        })
+      },
       ...nFields
     }
 

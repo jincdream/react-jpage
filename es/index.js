@@ -50,11 +50,10 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
         if (componentId === "____inited____") {
           obj.____inited____ = true;
           return true;
-        }
+        } // if (!obj[componentId]) {
+        //   obj[componentId] = {}
+        // }
 
-        if (!obj[componentId]) {
-          obj[componentId] = {};
-        }
 
         if ({}.toString.call(value).toLocaleLowerCase() === "[object object]") {
           obj[componentId] = _extends({}, obj[componentId], value);
