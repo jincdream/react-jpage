@@ -144,6 +144,13 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       PageContext: this.PageContext,
       changeContext: function changeContext(data) {
         _this4.LinkageContext[id] = data;
+      },
+      updateLinkages: function updateLinkages() {
+        _this4.Client.post({
+          server: _this4.ServerID,
+          path: "/linkage/update",
+          body: {}
+        });
       }
     }, nFields);
 
