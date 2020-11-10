@@ -1,7 +1,6 @@
 import { OBS_Schema, Base } from 'obs-parser'
 
 export interface LinkageContextBase<T> extends object {
-  ____inited____: boolean;
   [K in T]: K[T]
 }
 export interface IProps<AllComponents extends Base, Components extends Base, Context, LinkageContext> {

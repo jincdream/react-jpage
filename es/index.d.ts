@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IComponentRenderDO, Base } from 'obs-parser';
+import { IComponentRenderDO, Base, OBS_Schema } from 'obs-parser';
 import { IProps, IState } from './types';
 import { Client, Server } from 'jinter';
 export declare const LayoutBox: any;
@@ -10,13 +10,15 @@ export default class ReactJPage<AllComponents extends Base, ComponentsData exten
     Server: Server;
     Client: Client;
     constructor(props: IProps<AllComponents, ComponentsData, Context, LinkageContext>);
-    initLinkages(): void;
+    private allFields;
+    private createFields;
+    initLinkages(allFields: ComponentsData): void;
     PageContext: Readonly<Context | {}>;
     triggers: {
         [key: string]: () => void;
     }[];
     state: {
-        schema: import("obs-parser").OBS_Schema<ComponentsData, AllComponents>;
+        schema: OBS_Schema<ComponentsData, AllComponents>;
         components: {};
     };
     componentWillReceiveProps(props: IProps<AllComponents, ComponentsData, Context, LinkageContext>): void;

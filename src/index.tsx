@@ -1,7 +1,8 @@
 import * as React from 'react';
 import isEqual from 'lodash.isequal'
-import ObsParser, { IComponentRenderDO, Base, EffectFields } from 'obs-parser'
-import { IProps, IState, LinkageContextBase } from './types'
+import _set from 'lodash.set'
+import ObsParser, { IComponentRenderDO, Base, EffectFields, OBS_Schema } from 'obs-parser'
+import { IProps, IState } from './types'
 import EffectWrap from './EffectWrap'
 import { updateSate, fixGridAreaName, getScriptFilds } from './common'
 import LayoutBox_ from './Layout/LayoutBox'
@@ -27,36 +28,54 @@ export default class ReactJPage<
 
   constructor(props: IProps<AllComponents, ComponentsData, Context, LinkageContext>) {
     super(props)
-    this.initLinkages()
+    this.allFields = this.createFields(props.schema) as ComponentsData
+    this.initLinkages(this.allFields)
   }
-  initLinkages() {
-    let linkageContext = new Proxy<LinkageContextBase<LinkageContext>>((this.props.LinkageContext || {}) as LinkageContextBase<LinkageContext>, {
+  private allFields: ComponentsData = {} as ComponentsData
+  private createFields(schema: OBS_Schema<ComponentsData, AllComponents>) {
+    let staticFields: {
+      [key: string]: object
+    } = {}
+    Object.keys(schema.data).forEach((name: string) => {
+      let componentData = schema.data[name]
+      let { fields } = componentData
+      staticFields[name] = fields ? JSON.parse(JSON.stringify(fields)) : {}
+    })
+
+    Object.keys(schema.data).forEach((name: keyof ComponentsData) => {
+      let componentData = schema.data[name]
+      let { scriptFields } = componentData
+      if (!scriptFields) return;
+      let data = getScriptFilds<EffectFields<AllComponents>, object, Partial<ComponentsData>>(scriptFields, {
+        ...this.PageContext,
+        ...staticFields
+      }, staticFields[name])
+      staticFields[name] = data
+    })
+
+    Object.keys(schema.data).forEach((name: keyof ComponentsData) => {
+      let componentData = schema.data[name]
+      let { effectFields } = componentData
+      if (!effectFields) return;
+      let data = getScriptFilds<EffectFields<AllComponents>, object, Partial<ComponentsData>>(effectFields, {
+        ...this.PageContext,
+        ...staticFields
+      }, staticFields[name])
+      staticFields[name] = data
+    })
+
+    return staticFields
+  }
+
+  initLinkages(allFields: ComponentsData) {
+    let linkageContext = new Proxy<ComponentsData>(allFields, {
       set: (obj: any, componentId: string, value) => {
-        // Has not yet been initialized
-        if (componentId === "____inited____") {
-          obj.____inited____ = true
-          return true
-        }
-        // if (!obj[componentId]) {
-        //   obj[componentId] = {}
-        // }
-
-        if (({}).toString.call(value).toLocaleLowerCase() === "[object object]") {
-          obj[componentId] = {
-            ...obj[componentId],
-            ...value
-          }
-        } else {
-          obj[componentId] = value
-        }
-
-        if (obj.____inited____) {
-          this.Client.post({
-            server: this.ServerID,
-            path: "/linkage/update",
-            body: { id: componentId }
-          })
-        }
+        _set(obj, componentId, value)
+        this.Client.post({
+          server: this.ServerID,
+          path: "/linkage/update",
+          body: { id: componentId }
+        })
         return true
       }
     })
@@ -80,7 +99,6 @@ export default class ReactJPage<
   }
   componentDidMount() {
     // Initialize the end
-    this.LinkageContext.____inited____ = true
     this.mounted()
   }
   componentWillUnmount() {
@@ -110,21 +128,21 @@ export default class ReactJPage<
   }
   renderComponents(component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) {
     let { components: ReactComponents } = this.props
-    let { n: name, d: data, id, childrens, e: effect, l: linkages = [], s: scriptFields } = component
+    let { n: name, d: data, id, childrens, e: effect, l: linkages = [] } = component
     name = name.replace(/^(\S)/, (m: string, a: string) => a.toUpperCase())
     let C: React.ReactType = LocalComponents[name] || ReactComponents[name]
     if (!C) return <div key={component.id as string} />
 
-    let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : data
+    // let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : data
+    // nFields = JSON.parse(JSON.stringify(nFields))
     let componentProps = {
       PageContext: this.PageContext,
       changeContext: (data: Partial<ComponentsData[keyof ComponentsData]>) => {
         this.LinkageContext[id] = data
       },
-      ...nFields
+      ...data,
+      ...this.allFields[id]
     }
-
-    this.LinkageContext[id] = nFields
 
     let layout = fixGridAreaName(id)
     let childrensComponent = [].map.call(childrens, (component: IComponentRenderDO<AllComponents, ComponentsData>, index: number) => this.renderComponents(component, index))

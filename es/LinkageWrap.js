@@ -15,7 +15,15 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
     _this = _React$Component.call(this, props) || this;
     _this.state = _extends({}, _this.props.children.props || {});
     _this.eventId = void 0;
-    _this.eventId = props.server.onPost({
+    return _this;
+  }
+
+  var _proto = LinkageWrap.prototype;
+
+  _proto.init = function init(props) {
+    var _this2 = this;
+
+    this.eventId = this.props.server.onPost({
       path: "/linkage/update"
     }, /*#__PURE__*/function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee(data) {
@@ -24,19 +32,27 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                linkages = props.linkages.filter(function (l) {
+                linkages = _this2.props.linkages.filter(function (l) {
                   return data.id ? l.deps.findIndex(function (v) {
                     return v === data.id;
                   }) >= 0 : true;
                 }).map(function (l) {
                   var target = l.target; // console.log(this.state, l.exp, target, "this.statethis.state")
 
-                  _set(_this.state, target, expressionRun(l.exp, {
-                    $Context: props.getContext()
-                  })); // _merge(this.state, rz)
+                  var rz;
+
+                  try {
+                    rz = expressionRun(l.exp, {
+                      $Context: props.getContext()
+                    });
+                  } catch (error) {
+                    return;
+                  }
+
+                  _set(_this2.state, target, rz); // _merge(this.state, rz)
 
                 });
-                linkages.length > 0 && _this.forceUpdate();
+                linkages.length > 0 && _this2.forceUpdate();
 
               case 2:
               case "end":
@@ -50,13 +66,14 @@ var LinkageWrap = /*#__PURE__*/function (_React$Component) {
         return _ref.apply(this, arguments);
       };
     }());
-    return _this;
-  }
-
-  var _proto = LinkageWrap.prototype;
+  };
 
   _proto.componentWillUnmount = function componentWillUnmount() {
     this.props.server.off(this.eventId, true);
+  };
+
+  _proto.componentWillMount = function componentWillMount() {
+    this.init(this.props);
   };
 
   _proto.render = function render() {

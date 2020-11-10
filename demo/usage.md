@@ -10,6 +10,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import ReactJPage,{Layout} from 'react-j-page';
 
+
 function CompoenntA(props){
   return <div>{props.data.count} - {props.data.a}</div>
 }
@@ -61,6 +62,19 @@ class Page extends Component {
     </div>
   }
 }
+
+class SwitchChildren extends Component {
+  componentDidMount() {
+    console.log("SwitchChildren componentDidMount")
+  }
+  componentWillUnmount() {
+    console.log("SwitchChildren componentWillUnmount")
+  }
+  render() {
+    let { style, children, childrenMap, value } = this.props
+    return children[childrenMap[value]]
+  }
+}
 function A (props){
   console.log(props,"aaaaa")
   return <div>afasdasd
@@ -95,6 +109,14 @@ function D (props){
   <pre>
     {q}
   </pre>
+  </div>
+}
+function TypeChange(props){
+  return <div>sad
+  <button onClick={()=>{
+    props.changeContext({value: props.current === "shop" ? "item" : "shop"})
+    console.log("change", props.current === "shop" ? "item" : "shop")
+  }}>change</button>
   </div>
 }
 class App extends Component {
@@ -279,7 +301,7 @@ class App extends Component {
               },
               CompoenntB: {
                 fields: {
-                  count: 2
+                  count: 999
                 }
               },
               Layout: {
@@ -294,6 +316,72 @@ class App extends Component {
               root: "Layout",
               structure: {
                 Layout: ["CompoenntA","CompoenntB"]
+              }
+            }
+          }}
+        ></ReactJPage>
+        </div>
+        <div>
+  ========
+  <hr />
+        <ReactJPage
+          components={{CompoenntA,CompoenntB,SwitchChildren,TypeChange}}
+          schema={{
+            data: {
+              TypeChange: {
+                effectFields: {
+                  current: "$Context.TypeChange.value"
+                },
+                fields: {
+                  value: "item"
+                }
+              },
+              SwitchChildren: {
+                effectFields: {
+                  value: "$Context.TypeChange.value"
+                },
+                fields: {
+                  value: "item",
+                  childrenMap: {
+                    item: 0,
+                    shop: 1
+                  }
+                }
+              },
+              CompoenntA: {
+                effectFields: {
+                  "data.count": "$Context.CompoenntB.count + 1"
+                },
+                fields: {
+                  data: {
+                    a: 1
+                  }
+                }
+              },
+              CompoenntB: {
+                fields: {
+                  count: 999
+                }
+              },
+              Layout: {
+                fields: {
+                  template:[["TypeChange"],["SwitchChildren"]]
+                }
+              },
+              Layout$a: {
+                fields: {
+                  template:[["CompoenntA"],["CompoenntB"]]
+                }
+              }
+            },
+            hierarchy: {
+              component: [],
+              componentDetail: {},
+              root: "Layout",
+              structure: {
+                Layout: ["TypeChange","SwitchChildren"],
+                SwitchChildren: ["Layout$a","Layout$b"],
+                Layout$a: ["CompoenntA","CompoenntB"]
               }
             }
           }}

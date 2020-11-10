@@ -2,6 +2,7 @@ import _extends from "@babel/runtime/helpers/extends";
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
 import * as React from 'react';
 import isEqual from 'lodash.isequal';
+import _set from 'lodash.set';
 import ObsParser from 'obs-parser';
 import EffectWrap from './EffectWrap';
 import { updateSate, fixGridAreaName, getScriptFilds } from './common';
@@ -27,49 +28,62 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
     _this.ServerID = "ReactJPage_" + Date.now().toString(32);
     _this.Server = new Server(_this.ServerID);
     _this.Client = new Client(_this.ServerID);
+    _this.allFields = {};
     _this.PageContext = Object.freeze(_this.props.PageContext || {});
     _this.triggers = [];
     _this.state = {
       schema: _this.props.schema,
       components: {}
     };
+    _this.allFields = _this.createFields(props.schema);
 
-    _this.initLinkages();
+    _this.initLinkages(_this.allFields);
 
     return _this;
   }
 
   var _proto = ReactJPage.prototype;
 
-  _proto.initLinkages = function initLinkages() {
+  _proto.createFields = function createFields(schema) {
     var _this2 = this;
 
-    var linkageContext = new Proxy(this.props.LinkageContext || {}, {
+    var staticFields = {};
+    Object.keys(schema.data).forEach(function (name) {
+      var componentData = schema.data[name];
+      var fields = componentData.fields;
+      staticFields[name] = fields ? JSON.parse(JSON.stringify(fields)) : {};
+    });
+    Object.keys(schema.data).forEach(function (name) {
+      var componentData = schema.data[name];
+      var scriptFields = componentData.scriptFields;
+      if (!scriptFields) return;
+      var data = getScriptFilds(scriptFields, _extends({}, _this2.PageContext, staticFields), staticFields[name]);
+      staticFields[name] = data;
+    });
+    Object.keys(schema.data).forEach(function (name) {
+      var componentData = schema.data[name];
+      var effectFields = componentData.effectFields;
+      if (!effectFields) return;
+      var data = getScriptFilds(effectFields, _extends({}, _this2.PageContext, staticFields), staticFields[name]);
+      staticFields[name] = data;
+    });
+    return staticFields;
+  };
+
+  _proto.initLinkages = function initLinkages(allFields) {
+    var _this3 = this;
+
+    var linkageContext = new Proxy(allFields, {
       set: function set(obj, componentId, value) {
-        // Has not yet been initialized
-        if (componentId === "____inited____") {
-          obj.____inited____ = true;
-          return true;
-        } // if (!obj[componentId]) {
-        //   obj[componentId] = {}
-        // }
+        _set(obj, componentId, value);
 
-
-        if ({}.toString.call(value).toLocaleLowerCase() === "[object object]") {
-          obj[componentId] = _extends({}, obj[componentId], value);
-        } else {
-          obj[componentId] = value;
-        }
-
-        if (obj.____inited____) {
-          _this2.Client.post({
-            server: _this2.ServerID,
-            path: "/linkage/update",
-            body: {
-              id: componentId
-            }
-          });
-        }
+        _this3.Client.post({
+          server: _this3.ServerID,
+          path: "/linkage/update",
+          body: {
+            id: componentId
+          }
+        });
 
         return true;
       }
@@ -86,7 +100,6 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
 
   _proto.componentDidMount = function componentDidMount() {
     // Initialize the end
-    this.LinkageContext.____inited____ = true;
     this.mounted();
   };
 
@@ -103,11 +116,11 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.updateSate = function updateSate(keys, receiveProps) {
-    var _this3 = this;
+    var _this4 = this;
 
     var state = {};
     keys.forEach(function (key) {
-      var value = _this3.state[key];
+      var value = _this4.state[key];
       var receiveValue = receiveProps[key];
 
       if (isEqual(value, receiveValue)) {
@@ -120,7 +133,7 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.renderComponents = function renderComponents(component, index) {
-    var _this4 = this;
+    var _this5 = this;
 
     var ReactComponents = this.props.components;
     var name = component.n,
@@ -129,35 +142,26 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
         childrens = component.childrens,
         effect = component.e,
         _component$l = component.l,
-        linkages = _component$l === void 0 ? [] : _component$l,
-        scriptFields = component.s;
+        linkages = _component$l === void 0 ? [] : _component$l;
     name = name.replace(/^(\S)/, function (m, a) {
       return a.toUpperCase();
     });
     var C = LocalComponents[name] || ReactComponents[name];
     if (!C) return /*#__PURE__*/React.createElement("div", {
       key: component.id
-    });
-    var nFields = scriptFields ? getScriptFilds(scriptFields, this.PageContext, data) : data;
+    }); // let nFields = scriptFields ? getScriptFilds<EffectFields<ComponentsData>, Readonly<{}> | Readonly<Context>, Partial<ComponentsData>>(scriptFields, this.PageContext, data) : data
+    // nFields = JSON.parse(JSON.stringify(nFields))
 
     var componentProps = _extends({
       PageContext: this.PageContext,
       changeContext: function changeContext(data) {
-        _this4.LinkageContext[id] = data;
-      },
-      updateLinkages: function updateLinkages() {
-        _this4.Client.post({
-          server: _this4.ServerID,
-          path: "/linkage/update",
-          body: {}
-        });
+        _this5.LinkageContext[id] = data;
       }
-    }, nFields);
+    }, data, this.allFields[id]);
 
-    this.LinkageContext[id] = nFields;
     var layout = fixGridAreaName(id);
     var childrensComponent = [].map.call(childrens, function (component, index) {
-      return _this4.renderComponents(component, index);
+      return _this5.renderComponents(component, index);
     });
     var Child = /*#__PURE__*/React.cloneElement( /*#__PURE__*/React.createElement(C, null), componentProps, childrensComponent);
 
@@ -171,8 +175,8 @@ var ReactJPage = /*#__PURE__*/function (_React$Component) {
       Child = /*#__PURE__*/React.createElement(LinkageWrap, {
         getContext: function getContext() {
           var obj = {};
-          Object.keys(_this4.LinkageContext).forEach(function (n) {
-            return obj[n] = _this4.LinkageContext[n];
+          Object.keys(_this5.LinkageContext).forEach(function (n) {
+            return obj[n] = _this5.LinkageContext[n];
           });
           return obj;
         },

@@ -25,7 +25,13 @@ export function fixGridAreaName(name: string) {
 export function getScriptFilds<O extends object, C, R extends object>(obj: { [k in keyof O]: string }, context: C, rz: R = {} as R): R {
   Object.keys(obj).forEach((k: keyof O) => {
     let n = obj[k]
-    let value = expressionRun(n, { $Context: context })
+    let value
+    try {
+      value = expressionRun(n, { $Context: context })
+    } catch (error) {
+      // console.error("[getScriptFilds error]:", error)
+      return;
+    }
     _set<R>(rz, k, value)
   })
   return rz

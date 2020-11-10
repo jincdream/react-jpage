@@ -11,7 +11,9 @@ export default class LinkageWrap<Names> extends React.Component<Props<Names>> {
     state: any;
     constructor(props: Props<Names>);
     eventId: number;
+    init(props: Props<Names>): void;
     componentWillUnmount(): void;
+    componentWillMount(): void;
     render(): React.ReactElement<any>;
 }
 export {};

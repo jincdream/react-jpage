@@ -23,9 +23,16 @@ export function getScriptFilds(obj, context, rz) {
 
   Object.keys(obj).forEach(function (k) {
     var n = obj[k];
-    var value = expressionRun(n, {
-      $Context: context
-    });
+    var value;
+
+    try {
+      value = expressionRun(n, {
+        $Context: context
+      });
+    } catch (error) {
+      // console.error("[getScriptFilds error]:", error)
+      return;
+    }
 
     _set(rz, k, value);
   });

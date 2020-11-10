@@ -14,21 +14,32 @@ export default class LinkageWrap<Names> extends React.Component<Props<Names>>{
   state: any = { ...this.props.children.props || {} }
   constructor(props: Props<Names>) {
     super(props);
-    this.eventId = props.server.onPost({ path: "/linkage/update" }, async (data: { id?: Names }) => {
-      let linkages = props.linkages
+  }
+  eventId: number
+  init(props: Props<Names>) {
+    this.eventId = this.props.server.onPost({ path: "/linkage/update" }, async (data: { id?: Names }) => {
+      let linkages = this.props.linkages
         .filter(l => data.id ? (l.deps.findIndex(v => v === data.id) >= 0) : true)
         .map(l => {
           let target = l.target as unknown as string
           // console.log(this.state, l.exp, target, "this.statethis.state")
-          _set(this.state, target, expressionRun(l.exp, { $Context: props.getContext() }))
+          let rz
+          try {
+            rz = expressionRun(l.exp, { $Context: props.getContext() })
+          } catch (error) {
+            return;
+          }
+          _set(this.state, target, rz)
           // _merge(this.state, rz)
         })
       linkages.length > 0 && this.forceUpdate()
     })
   }
-  eventId: number
   componentWillUnmount() {
     this.props.server.off(this.eventId, true)
+  }
+  componentWillMount() {
+    this.init(this.props)
   }
   render() {
     let { children } = this.props
